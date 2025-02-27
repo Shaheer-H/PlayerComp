@@ -9,7 +9,6 @@ def load_data(season="2022"):
         basketball_data = get_player_stats("basketball", season=season)
     except Exception as e:
         print(f"Warning: Using sample data due to API error: {e}")
-        # Sample data for testing
         return {
             "soccer": {
                 "Kevin De Bruyne": {
@@ -40,37 +39,39 @@ def load_data(season="2022"):
             }
         }
     
-    data = {
-        "soccer": {},
-        "basketball": {}
-    }
+    data = {"soccer": {}, "basketball": {}}
     
-    # Parse soccer data
+    # Parse soccer data with None checks
     if soccer_data and 'response' in soccer_data:
         for player in soccer_data['response']:
             name = player['player']['name']
-            stats = player['statistics'][0]  # Get the first season's stats
-            games = stats.get('games', {}).get('appearences', 1)  # Avoid division by zero
+            stats = player['statistics'][0]
+            games = (stats.get('games') or {}).get('appearences') or 1
+            
+            goals = stats.get('goals') or {}
+            shots = stats.get('shots') or {}
+            tackles = stats.get('tackles') or {}
+            passes = stats.get('passes') or {}
             
             data["soccer"][name] = {
-                "goals_per_game": stats.get('goals', {}).get('total', 0) / games,
-                "assists_per_game": stats.get('goals', {}).get('assists', 0) / games,
-                "shot_accuracy": stats.get('shots', {}).get('on', 0) / stats.get('shots', {}).get('total', 1),
-                "minutes_per_game": stats.get('games', {}).get('minutes', 0) / games,
-                "xG": stats.get('goals', {}).get('expected', 0),
-                "xA": stats.get('goals', {}).get('expected_assists', 0),
-                "tackles": stats.get('tackles', {}).get('total', 0) / games,
-                "interceptions": stats.get('interceptions', 0) / games,
-                "clearances": stats.get('clearances', 0) / games,
-                "pass_completion": stats.get('passes', {}).get('accuracy', 0)
+                "goals_per_game": (goals.get('total', 0)) / games,
+                "assists_per_game": (goals.get('assists', 0)) / games,
+                "shot_accuracy": (shots.get('on', 0)) / (shots.get('total', 1)),
+                "minutes_per_game": ((stats.get('games') or {}).get('minutes', 0)) / games,
+                "xG": goals.get('expected', 0),
+                "xA": goals.get('expected_assists', 0),
+                "tackles": (tackles.get('total', 0)) / games,
+                "interceptions": (stats.get('interceptions') or 0) / games,
+                "clearances": (stats.get('clearances') or 0) / games,
+                "pass_completion": passes.get('accuracy', 0)
             }
     
-    # Parse basketball data
+    # Parse basketball data (assumes valid structure)
     if basketball_data and 'response' in basketball_data:
         for player in basketball_data['response']:
             name = player['player']['name']
             stats = player['statistics'][0]
-            games = stats.get('games', {}).get('played', 1)
+            games = (stats.get('games') or {}).get('played') or 1
             
             data["basketball"][name] = {
                 "points_per_game": stats.get('points', 0) / games,
@@ -85,6 +86,7 @@ def load_data(season="2022"):
             }
     
     return data
+
 
 # 2. Data Normalization / Feature Extraction
 def preprocess_data(data):
