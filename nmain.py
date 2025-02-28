@@ -53,16 +53,16 @@ def main():
 
     # Compute per game metrics:
     # For football, assume keys: "games", "goals", "assists"
-    games1 = float(stats1.get("games", 1))
-    goals1 = float(stats1.get("goals", 0))
-    assists1 = float(stats1.get("assists", 0))
+    games1 = float(stats1.get("games", {}).get("appearences", 1))
+    goals1 = float(stats1.get("goals", {}).get("total", 0))
+    assists1 = float(stats1.get("goals", {}).get("assists", 0))
     gpg = goals1 / games1
     apg_soccer = assists1 / games1
 
     # For basketball, assume keys: "games", "points", "assists"
-    games2 = float(stats2.get("games", 1))
-    points2 = float(stats2.get("points", 0))
-    assists2 = float(stats2.get("assists", 0))
+    games2 = float(stats2.get("games", {}).get("appearences", 1))
+    points2 = float(stats2.get("points", {}).get("total", 0))
+    assists2 = float(stats2.get("assists", {}).get("assists", 0))
     ppg = points2 / games2
     apg_basket = assists2 / games2
 
