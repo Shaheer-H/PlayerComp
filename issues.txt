@@ -1,0 +1,25 @@
+Main Issues:
+
+    Some players from past seasons are not available
+    Player search is shotty, need to make searching easier. 
+        ex/ LeBron James -> player not found
+            James -> player found
+
+    For some reason past players not found:
+        ex/ Season: 2018, player: Eden Hazard -> player not found
+
+    There is no meaningfull calculation with the similarity score right now. 
+    A proper evaluation function must be developed, using all advanced matrics.
+    
+
+    We need to compile a dataset to eventually train a model on. similarity score is a bit Mickey
+    Discussion on what kind of model we use must take place.
+ 
+
+a sample of the tree for football is given in samplefut.txt
+
+run this command to grab the sats for a given player:
+
+Basketball: py -c "import getstat; print(getstat.get_basketball_player_stats(player_id='236', season='2020'))"
+
+Football: python -c "import getstat; print(getstat.get_football_player_stats(search='Salah', season='2022'))"
